@@ -11,7 +11,7 @@
         print*,"Enter log's total length (feet): "
         read(*,*) total_length
         
-        print*,"Enter 1 if 1/4"" saw kerf is assumed or 0 if 1/8"" saw kerf is assumed: "
+        print*,"Enter 1 if 1/4"" saw kerf is assumed or 0 if 1/8"" saw kerf is assumed:  "
         read(*,*) kerf
 
       end subroutine getLOGdata
