@@ -1,3 +1,7 @@
+{
+	REMOVED FEATURES:
+		Must have explicit type declarations for variables
+}
 
       SUBROUTINE JCLARK (DS,DL,TL,KERF,V)
 C *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -20,17 +24,17 @@ C COMPUTED.
 C IF THE LOG’S LARGE END DIAMETER IS FURNISHED TO JCLARK A TAPER RATE
 C WILL BE COMPUTED. IF DL=0 THE STANDARD ASSUMPTION OF 1/2 INCH PER 4
 C FEET OF LOG LENGTH WILL BE USED.
-      1 IF(DL)3,3,2
+      1 IF(DL)3,3,2           {Arithmatic If statments}
       2 T=4.0*(DL-DS)/TL
       GO TO 4
       3 T=0.5
 
 C THE FOLLOWING LOOP (THROUGH STATEMENT 5) FINDS OUT HOW MANY FULL 4
 C FOOT SEGMENTS THE LOG CONTAINS.
-      4 DO 5 I=1,20
+      4 DO 5 I=1,20           {I not defined? doesnt need to be}
       IF(TL-FLOAT(4*I))6,5,5
       5 CONTINUE
-      6 L=I-1
+      6 L=I-1                 {L not defined? doesnt need to be}
       SL=FLOAT(4*L)
 
 C THE FOLLOWING STATEMENT MOVES THE SCALING DIAMETER DOWN TO THE END OF
