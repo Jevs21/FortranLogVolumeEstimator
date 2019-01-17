@@ -1,5 +1,5 @@
-      subroutine getLOGdata(scaling_diameter, diameter_inside_bark, total_length, kerf)
-        
+      ! Subroutine to gather log size data to use in calculations
+      subroutine getLOGdata(scaling_diameter, diameter_inside_bark, total_length, kerf)      
         real, intent(out) :: scaling_diameter, diameter_inside_bark, total_length, kerf
 
         print*,"Enter diameter inside bark at log's small end (scaling diameter) (inches): "
@@ -13,10 +13,9 @@
         
         print*,"Enter 1 if 1/4"" saw kerf is assumed or 0 if 1/8"" saw kerf is assumed:  "
         read(*,*) kerf
-
       end subroutine getLOGdata
 
-
+      ! A testing funciton used to print the input variables
       subroutine TEST_PRINT(sd, dib, tl, kerf)
         real, intent(in) :: sd, dib, tl, kerf
 
@@ -28,19 +27,20 @@
         print*,"########################################"
       end subroutine TEST_PRINT
 
+
       subroutine calcLOGjclark(diameter_small, diameter_large, total_log_length, KERF, VOLUME)
         real, intent(out) :: VOLUME
         real, intent(in)  :: diameter_small, diameter_large, total_log_length, KERF
 
-        real :: taper_rate, segment_length, D, DEX, UADD, L, DC
+        real :: taper_rate, segment_length, segment_scaling_diameter, DEX, UADD, log_segment_amt, DC
 
         VOLUME     = 0 
         taper_rate = 0.5
-        SL         = 0.0
-        D          = 0.0
+        segment_length = 0.0
+        segment_scaling_diameter = 0.0
         DEX        = 0.0
         UADD       = 0.0
-        L          = 0.0
+        log_segment_amt = 0.0
         DC         = 0.0
 
         IF(diameter_large < 0.0) RETURN
@@ -50,15 +50,15 @@
 
         DO i = 1,20
           IF (total_log_length - 4 * i < 0.0) then
-            L = i - 1
-            segment_length = 4 * L
+            log_segment_amt = i - 1
+            segment_length = 4 * log_segment_amt
             exit
           END IF
         END DO
 
         print*,"segment_length: ",segment_length
 
-        D = diameter_small + (taper_rate / 4.0) * (total_log_length - segment_length)
+        segment_scaling_diameter = diameter_small + (taper_rate / 4.0) * (total_log_length - segment_length)
 
         DO i = 1,4
           IF (segment_length - total_log_length + i > 0.0) then
@@ -68,8 +68,8 @@
           END IF
         END DO
 
-        DO i = 1,INT(L)
-          DC = D + taper_rate * (i - 1)
+        DO i = 1,INT(log_segment_amt)
+          DC = segment_scaling_diameter + taper_rate * (i - 1)
           VOLUME = VOLUME + 0.22 * DC * DC - 0.71 * DC
         END DO
 
