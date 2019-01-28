@@ -89,7 +89,7 @@
         PI                  = 3.14159265
         metres_radius_small = (diameter_small / 39.37) / 2.0
         metres_radius_large = (diameter_large / 39.37) / 2.0
-        metres_log_length   = (total_log_length / 3.2808)
+        metres_log_length   = (total_log_length / 3.2808) 
 
         area_small = PI * metres_radius_small * metres_radius_small
         area_large = PI * metres_radius_large * metres_radius_large
