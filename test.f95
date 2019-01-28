@@ -1,3 +1,8 @@
+      ! TODO
+      !  - round output to 2 decimal places
+      !  - fix volume output
+      !  - prettify
+
       ! Subroutine to gather log size data to use in calculations
       subroutine getLOGdata(scaling_diameter, diameter_inside_bark, total_length, kerf)      
         real, intent(out) :: scaling_diameter, diameter_inside_bark, total_length, kerf
@@ -108,6 +113,8 @@
       call TEST_PRINT(scaling_diameter, diameter_inside_bark, total_length, kerf)
 
       call calcLOGjclark(scaling_diameter, diameter_inside_bark, total_length, kerf, board_volume)
+
+      call TEST_PRINT(scaling_diameter, diameter_inside_bark, total_length, kerf)
 
       call calcLOGvolume(scaling_diameter, diameter_inside_bark, total_length, kerf, metric_volume)
       
