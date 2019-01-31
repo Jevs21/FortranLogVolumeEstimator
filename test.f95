@@ -89,15 +89,19 @@
         real, intent(out) :: VOLUME
         real, intent(in)  :: diameter_small, diameter_large, total_log_length, KERF
 
-        real :: PI, area_small, area_large, metres_radius_small, metres_radius_large, metres_log_length
+        real :: PI, calc_diameter_large, area_small, area_large, metres_radius_small, metres_radius_large, metres_log_length
+
+        calc_diameter_large = diameter_large
+        IF(diameter_large == 0) calc_diameter_large = diameter_small + ((total_log_length/4) * .5)
+
 
         PI                  = 3.14159265
         metres_radius_small = (diameter_small / 39.37) / 2.0
-        metres_radius_large = (diameter_large / 39.37) / 2.0
+        metres_radius_large = (calc_diameter_large / 39.37) / 2.0
         metres_log_length   = (total_log_length / 3.2808) 
 
-        area_small = PI * metres_radius_small * metres_radius_small
-        area_large = PI * metres_radius_large * metres_radius_large
+        area_small = PI * (metres_radius_small * metres_radius_small)
+        area_large = PI * (metres_radius_large * metres_radius_large)
 
         VOLUME = ((area_small + area_large) / 2) * metres_log_length
 
