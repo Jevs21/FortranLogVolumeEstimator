@@ -2,7 +2,6 @@
 !Author      : Jordan Evans (0964044)
 !Due Date    : Feb 1, 2019 
 
-
 ! getLOGdata()
 ! a subroutine to retrieve data from the user to be used in volume more_calculations
 ! pre:  scaling_diameter, diameter_inside_bark, total_length, kerf -> all undefined
