@@ -1,36 +1,71 @@
       ! TODO
       !  - round output to 2 decimal places
-      !  - fix volume output
       !  - prettify
 
       ! Subroutine to gather log size data to use in calculations
       subroutine getLOGdata(scaling_diameter, diameter_inside_bark, total_length, kerf)      
         real, intent(out) :: scaling_diameter, diameter_inside_bark, total_length, kerf
 
-        print*,"Enter diameter inside bark at log's small end (scaling diameter) (inches): "
-        read(*,*) scaling_diameter
-
-        print*,"Enter diameter inside bark at log's large end or 0 if the default taper option (1/2"") is to be used (inches): "
-        read(*,*) diameter_inside_bark
-
-        print*,"Enter log's total length (feet): "
-        read(*,*) total_length
+        DO WHILE (1 == 1)
+          print*,""
+          print*,"Enter diameter inside bark at log's small end (scaling diameter) (inches): "
+          read(*,*) scaling_diameter
+          IF (scaling_diameter <= 0.0) then
+            print*,"Scaling diameter must be > 0."
+          ELSE
+            exit
+          END IF
+        END DO
         
-        print*,"Enter 1 if 1/4"" saw kerf is assumed or 0 if 1/8"" saw kerf is assumed:  "
-        read(*,*) kerf
+        DO WHILE (1 == 1)
+          print*,""
+          print*,"Enter diameter inside bark at log's large end or 0 if the default taper option (1/2"") is to be used (inches): "
+          read(*,*) diameter_inside_bark
+          IF (diameter_inside_bark < 0.0) then
+            print*,"Diameter inside bark must be >= 0."
+          ELSE
+            exit
+          END IF
+        END DO
+        
+        DO WHILE (1 == 1)
+          print*,""
+          print*,"Enter log's total length (feet): "
+          read(*,*) total_length
+          IF (total_length <= 0.0) then
+            print*,"Total log length must be > 0."
+          ELSE
+            exit
+          END IF
+        END DO
+        
+        DO WHILE (1 == 1)
+          print*,""
+          print*,"Enter 1 if 1/4"" saw kerf is assumed or 0 if 1/8"" saw kerf is assumed: "
+          read(*,*) kerf
+          IF (kerf /= 0.0 .and. kerf /= 1.0) then
+            print*,"KERF value must be either 1 or 0."
+          ELSE
+            exit
+          END IF
+        END DO
+        
       end subroutine getLOGdata
 
       ! A testing funciton used to print the input variables
-      subroutine TEST_PRINT(sd, dib, tl, kerf)
-        real, intent(in) :: sd, dib, tl, kerf
+      subroutine printResults(sd, dib, tl, kerf, bv, v)
+        real, intent(in) :: sd, dib, tl, kerf, bv, v
 
-        print*,"############## TEST PRINT ##############"
-        print*,"# Scaling Diameter: ",   sd," #"
-        print*,"#              DIB: ",  dib," #"
-        print*,"#     Total Length: ",   tl," #"
-        print*,"#         Saw KERF: ", kerf," #"
-        print*,"########################################"
-      end subroutine TEST_PRINT
+        print*,""
+        print*,"      ~~~~~~~~  RESULTS  ~~~~~~~~      "
+        write(*, '("    Scaling Diameter (in): ",f10.2)') sd
+        write(*, '("Diameter Inside Bark (in): ",f10.2)') dib
+        write(*, '("  Total Log Length (feet): ",f10.2)') tl
+        write(*, '("                     KERF: ",f10.2)') kerf
+        print*,""
+        write(*, '("             Board Volume: ",f10.2)') bv
+        write(*, '("             Volume (m^3): ",f10.2)') v
+      end subroutine printResults
 
 
       subroutine calcLOGjclark(diameter_small, diameter_large, total_log_length, KERF, VOLUME)
@@ -51,8 +86,6 @@
         IF(diameter_large < 0.0) RETURN
         IF(diameter_large > 0.0) taper_rate = 4.0 * (diameter_large - diameter_small) / total_log_length
 
-        print*,"Taper Rate=",taper_rate
-
         DO i = 1,20
           IF (total_log_length - 4 * i < 0.0) then
             log_segment_amt = i - 1
@@ -60,8 +93,6 @@
             exit
           END IF
         END DO
-
-        print*,"segment_length: ",segment_length
 
         segment_scaling_diameter = diameter_small + (taper_rate / 4.0) * (total_log_length - segment_length)
 
@@ -85,9 +116,9 @@
         RETURN
       end subroutine calcLOGjclark
 
-      subroutine calcLOGvolume(diameter_small, diameter_large, total_log_length, KERF, VOLUME)
+      subroutine calcLOGvolume(diameter_small, diameter_large, total_log_length,VOLUME)
         real, intent(out) :: VOLUME
-        real, intent(in)  :: diameter_small, diameter_large, total_log_length, KERF
+        real, intent(in)  :: diameter_small, diameter_large, total_log_length
 
         real :: PI, calc_diameter_large, area_small, area_large, metres_radius_small, metres_radius_large, metres_log_length
 
@@ -110,18 +141,32 @@
 
       PROGRAM test
       
+      integer :: more_calculations
       real :: scaling_diameter, diameter_inside_bark, total_length, kerf, board_volume, metric_volume
       
-      call getLOGdata(scaling_diameter, diameter_inside_bark, total_length, kerf)
+      more_calculations = 1
+
+      DO WHILE (more_calculations == 1)
+        call getLOGdata(scaling_diameter, diameter_inside_bark, total_length, kerf)
+
+        call calcLOGjclark(scaling_diameter, diameter_inside_bark, total_length, kerf, board_volume)
+
+        call calcLOGvolume(scaling_diameter, diameter_inside_bark, total_length, metric_volume)
+        
+        call printResults(scaling_diameter, diameter_inside_bark, total_length, kerf, board_volume, metric_volume)
+
+        
+        DO WHILE (1 == 1)
+          print*,""
+          print*,"Would you like to perform another calculation? (1=yes, 0=no): "
+          read(*,*) more_calculations
+          IF (more_calculations /= 0.0 .and. more_calculations /= 1.0) then
+            print*,"Must enter either 1 (yes) or 0 (no)."
+          ELSE
+            exit
+          END IF
+        END DO
+      END DO
       
-      call TEST_PRINT(scaling_diameter, diameter_inside_bark, total_length, kerf)
 
-      call calcLOGjclark(scaling_diameter, diameter_inside_bark, total_length, kerf, board_volume)
-
-      call TEST_PRINT(scaling_diameter, diameter_inside_bark, total_length, kerf)
-
-      call calcLOGvolume(scaling_diameter, diameter_inside_bark, total_length, kerf, metric_volume)
-      
-      print*,"BOARD  VOLUME: ",board_volume
-      print*,"METRIC VOLUME: ",metric_volume
       END PROGRAM test
